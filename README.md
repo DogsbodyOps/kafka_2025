@@ -21,9 +21,20 @@ This repository provides a high-availability Kafka cluster deployment using Dock
 - Configured for SSL and Schema Registry integration
 
 ### Kafdrop
-- Image: `obsidiandynamics/kafdrop:latest`
+- Image: `obsidiandynamics/kafdrop:latest` (or legacy `docker.causeway.com/kafka/kafdrop:<version>`)
 - Web UI for Kafka cluster management
 - Connects to all brokers for full cluster visibility
+- Example legacy usage:
+  ```bash
+  docker run -d -p 9000:9000 --name=kafdrop \
+    --restart always \
+    -e ZOOKEEPER_CONNECT=kafka-app1.cloud.local:2181,kafka-app2.cloud.local:2181,kafka-app3.cloud.local:2181 \
+    -e KAFKA_BROKERCONNECT=kafka-app1.cloud.local:9191,kafka-app2.cloud.local:9192,kafka-app3.cloud.local:9193 \
+    -e JVM_OPTS="-Xms32M -Xmx64M" \
+    -e SERVER_SERVLET_CONTEXTPATH="/" \
+    obsidiandynamics/kafdrop:latest
+  ```
+  - You can load balance the web interface with HAProxy; session stickiness is not required.
 
 ## Deployment Script
 
@@ -65,6 +76,21 @@ The `deployment_script.sh` script:
 - `deployment_script.sh` — Generates `.env` and starts services
 - `docker-compose.yml` — Service definitions
 - `old_world/kafka-setup/` — Legacy scripts for reference
+
+## Azure Pipelines
+
+- The repository includes an `azure-pipelines.yml` for CI/CD.
+- Pipeline steps:
+  - Check validity of deployment and compose files
+  - Inject secrets as environment variables
+  - Run the deployment script to generate `.env` and start services
+- Sensitive values (e.g., SSL passwords) should be stored as pipeline secrets and not committed to git.
+
+## Security
+
+- Do **not** commit `.env` files or secrets to version control.
+- Use Azure Pipeline secrets or Key Vault for sensitive values.
+- Review and secure any credentials, keystore/truststore files, and passwords.
 
 ## License
 
