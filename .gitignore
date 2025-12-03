@@ -1,0 +1,31 @@
+# Ignore environment files
+.env
+*.env
+
+# Ignore secrets and keystore/truststore files
+/data/kafka/vol4/secrets/
+**/secrets/
+*.jks
+*.p12
+*.pem
+*.crt
+*.key
+
+# Ignore log files
+*.log
+
+# Ignore Docker and build artifacts
+docker-compose.override.yml
+__pycache__/
+*.pyc
+*.swp
+
+# Ignore OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Ignore legacy scripts output
+old_world/kafka-setup/*.log
+old_world/kafka-setup/*.out
