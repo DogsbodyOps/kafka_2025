@@ -30,7 +30,7 @@ jobs:
           inputs:
             targetType: 'inline'
             script: |
-              export KAFKA_REST_CLIENT_SSL_KEYSTORE_PASSWORD="${KAFKA_REST_CLIENT_SSL_KEYSTORE_PASSWORD}"
-              export KAFKA_REST_CLIENT_SSL_TRUSTSTORE_PASSWORD="${KAFKA_REST_CLIENT_SSL_TRUSTSTORE_PASSWORD}"
+              export KAFKA_REST_CLIENT_SSL_KEYSTORE_PASSWORD=$(KAFKA_REST_CLIENT_SSL_KEYSTORE_PASSWORD)
+              export KAFKA_REST_CLIENT_SSL_TRUSTSTORE_PASSWORD=$(KAFKA_REST_CLIENT_SSL_TRUSTSTORE_PASSWORD)
               chmod +x ./deployment_script.sh
               ./deployment_script.sh
