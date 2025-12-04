@@ -1,36 +1,36 @@
 trigger:
 - main
 
-pool:
-  vmImage: 'ubuntu-latest'
-
 variables:
   # Sensitive values should be set as pipeline secrets, not here!
   KAFKA_REST_CLIENT_SSL_KEYSTORE_PASSWORD: $(KAFKA_REST_CLIENT_SSL_KEYSTORE_PASSWORD)
   KAFKA_REST_CLIENT_SSL_TRUSTSTORE_PASSWORD: $(KAFKA_REST_CLIENT_SSL_TRUSTSTORE_PASSWORD)
 
-steps:
-- checkout: self
-
-- task: Bash@3
-  displayName: 'Check deployment_script.sh validity'
-  inputs:
-    targetType: 'inline'
-    script: |
-      bash -n deployment_script.sh
-
-- task: Bash@3
-  displayName: 'Check docker-compose.yml validity'
-  inputs:
-    targetType: 'inline'
-    script: |
-      docker-compose -f docker-compose.yml config
-
-- task: Bash@3
-  displayName: 'Run deployment script with secrets'
-  inputs:
-    targetType: 'inline'
-    script: |
-      export KAFKA_REST_CLIENT_SSL_KEYSTORE_PASSWORD="${azure secret which is the value}"
-      export KAFKA_REST_CLIENT_SSL_TRUSTSTORE_PASSWORD="${azure secret which is the value}"
-      ./deployment_script.sh
+jobs:
+- deployment: DeployKafka
+  displayName: Deploy to Kafka Deployment Group
+  environment: Kafka-QA
+  pool:
+    name: kafka-qa-deployment
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - checkout: self
+        - task: CopyFiles@2
+          displayName: 'Copy files to target'
+          inputs:
+            SourceFolder: '$(System.DefaultWorkingDirectory)'
+            Contents: |
+              deployment_script.sh
+              docker-compose.yml
+            TargetFolder: '$(System.DefaultWorkingDirectory)'
+        - task: Bash@3
+          displayName: 'Run deployment script with secrets'
+          inputs:
+            targetType: 'inline'
+            script: |
+              export KAFKA_REST_CLIENT_SSL_KEYSTORE_PASSWORD="${KAFKA_REST_CLIENT_SSL_KEYSTORE_PASSWORD}"
+              export KAFKA_REST_CLIENT_SSL_TRUSTSTORE_PASSWORD="${KAFKA_REST_CLIENT_SSL_TRUSTSTORE_PASSWORD}"
+              chmod +x ./deployment_script.sh
+              ./deployment_script.sh

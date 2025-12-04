@@ -39,6 +39,24 @@ case "$host" in
     domain="prod.cloud.local"
     ssl_port=9093
     ;;
+  qa-kaf-app01)
+    broker_id=1
+    host_prefix="qa-kaf-app01"
+    domain="qa.cloud.local"
+    ssl_port=9091
+    ;;
+  qa-kaf-app02)
+    broker_id=2
+    host_prefix="qa-kaf-app02"
+    domain="qa.cloud.local"
+    ssl_port=9092
+    ;;
+  qa-kaf-app03)
+    broker_id=3
+    host_prefix="qa-kaf-app03"
+    domain="qa.cloud.local"
+    ssl_port=9093
+    ;;
   *)
     echo "Unknown host, exiting!"
     exit 1
@@ -50,6 +68,8 @@ if [[ "$domain" == "stage.cloud.local" ]]; then
   ZOOKEEPER_SERVERS="stg-kaf-app01.stage.cloud.local:2888:3888;stg-kaf-app02.stage.cloud.local:2888:3888;stg-kaf-app03.stage.cloud.local:2888:3888"
 elif [[ "$domain" == "prod.cloud.local" ]]; then
   ZOOKEEPER_SERVERS="prd-kaf-app1.prod.cloud.local:2888:3888;prd-kaf-app2.prod.cloud.local:2888:3888;prd-kaf-app3.prod.cloud.local:2888:3888"
+elif [[ "$domain" == "qa.cloud.local" ]]; then
+  ZOOKEEPER_SERVERS="qa-kaf-app01.qa.cloud.local:2888:3888;qa-kaf-app02.qa.cloud.local:2888:3888;qa-kaf-app03.qa.cloud.local:2888:3888"
 fi
 
 # Set Zookeeper connection string based on environment
@@ -57,6 +77,8 @@ if [[ "$domain" == "stage.cloud.local" ]]; then
   KAFKA_ZOOKEEPER_CONNECT="stg-kaf-app01.stage.cloud.local:2181,stg-kaf-app02.stage.cloud.local:2181,stg-kaf-app03.stage.cloud.local:2181"
 elif [[ "$domain" == "prod.cloud.local" ]]; then
   KAFKA_ZOOKEEPER_CONNECT="prd-kaf-app1.prod.cloud.local:2181,prd-kaf-app2.prod.cloud.local:2181,prd-kaf-app3.prod.cloud.local:2181"
+elif [[ "$domain" == "qa.cloud.local" ]]; then
+  KAFKA_ZOOKEEPER_CONNECT="qa-kaf-app01.qa.cloud.local:2181,qa-kaf-app02.qa.cloud.local:2181,qa-kaf-app03.qa.cloud.local:2181"
 fi
 
 # Set kafka super users based on environment
@@ -64,13 +86,17 @@ if [[ "$domain" == "stage.cloud.local" ]]; ]; then
   KAFKA_SUPER_USERS="User:CN=stg-kaf-app01.stage.cloud.local,OU=STREAM,O=CAUSEWAY,L=FARNHAM,ST=SURREY,C=UK;User:CN=stg-kaf-app02.stage.cloud.local,OU=STREAM,O=CAUSEWAY,L=FARNHAM,ST=SURREY,C=UK;User:CN=stg-kaf-app03.stage.cloud.local,OU=STREAM,O=CAUSEWAY,L=FARNHAM,ST=SURREY,C=UK"
 elif [[ "$domain" == "prod.cloud.local" ]]; then
   KAFKA_SUPER_USERS="User:CN=prd-kaf-app1.prod.cloud.local,OU=STREAM,O=CAUSEWAY,L=FARNHAM,ST=SURREY,C=UK;User:CN=prd-kaf-app2.prod.cloud.local,OU=STREAM,O=CAUSEWAY,L=FARNHAM,ST=SURREY,C=UK;User:CN=prd-kaf-app3.prod.cloud.local,OU=STREAM,O=CAUSEWAY,L=FARNHAM,ST=SURREY,C=UK"
+elif [[ "$domain" == "qa.cloud.local" ]]; then
+  KAFKA_SUPER_USERS="User:CN=qa-kaf-app01.qa.cloud.local,OU=STREAM,O=CAUSEWAY,L=FARNHAM,ST=SURREY,C=UK;User:CN=qa-kaf-app02.qa.cloud.local,OU=STREAM,O=CAUSEWAY,L=FARNHAM,ST=SURREY,C=UK;User:CN=qa-kaf-app03.qa.cloud.local,OU=STREAM,O=CAUSEWAY,L=FARNHAM,ST=SURREY,C=UK"
 fi
 
 # Set Kafdrop broker connect list based on environment
 if [[ "$domain" == "stage.cloud.local" ]]; then
   KAFKA_BROKERCONNECT="stg-kaf-app01.stage.cloud.local:9191,stg-kaf-app02.stage.cloud.local:9192,stg-kaf-app03.stage.cloud.local:9193"
-else
+elif [[ "$domain" == "prod.cloud.local" ]]; then
   KAFKA_BROKERCONNECT="prd-kaf-app1.prod.cloud.local:9191,prd-kaf-app2.prod.cloud.local:9192,prd-kaf-app3.prod.cloud.local:9193"
+elif [[ "$domain" == "qa.cloud.local" ]]; then
+  KAFKA_BROKERCONNECT="qa-kaf-app01.qa.cloud.local:9191,qa-kaf-app02.qa.cloud.local:9192,qa-kaf-app03.qa.cloud.local:9193"
 fi
 
 KAFKA_REST_SSL_KEYSTORE_PASSWORD=$KAFKA_REST_CLIENT_SSL_KEYSTORE_PASSWORD

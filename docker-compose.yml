@@ -1,7 +1,7 @@
 version: '3'
 services:
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:3.3.0
     container_name: kafka
     network_mode: host
     restart: always
@@ -29,7 +29,7 @@ services:
       # plus your log4j jars as needed
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:3.3.0
     container_name: zk
     network_mode: host
     restart: always
@@ -46,7 +46,7 @@ services:
       - /data/kafka/vol2/zk-txn-logs:/var/lib/zookeeper/log
 
   kafdrop:
-    image: obsidiandynamics/kafdrop:latest
+    image: docker.causeway.com/kafka/kafdrop:3.8.0
     container_name: kafdrop
     restart: always
     ports:
@@ -58,7 +58,7 @@ services:
       SERVER_SERVLET_CONTEXTPATH: "/"
 
   rest:
-    image: confluentinc/cp-kafka-rest:latest
+    image: docker.causeway.com/kafka/kafka-rest:3.3.0
     container_name: rest
     network_mode: host
     restart: always
