@@ -63,6 +63,9 @@ case "$host" in
     ;;
 esac
 
+# Copy docker-compose.yml to /opt/kafka/docker-compose.yml
+sudo cp docker-compose.yml /opt/kafka/docker-compose.yml
+
 # Set Zookeeper servers based on environment
 if [[ "$domain" == "stage.cloud.local" ]]; then
   ZOOKEEPER_SERVERS="stg-kaf-app01.stage.cloud.local:2888:3888;stg-kaf-app02.stage.cloud.local:2888:3888;stg-kaf-app03.stage.cloud.local:2888:3888"
