@@ -10,7 +10,7 @@ jobs:
 - deployment: DeployKafka
   displayName: Deploy to Kafka Deployment Group
   environment: Kafka-QA
-  pool:
+  deploymentPool:
     name: Kafka-qa-deployment
   strategy:
     runOnce:
