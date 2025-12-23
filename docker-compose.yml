@@ -1,4 +1,3 @@
-version: '3'
 services:
   kafka:
     image: confluentinc/cp-kafka:3.3.0
