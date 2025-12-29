@@ -97,7 +97,7 @@ When rotating SSL certificates or passwords:
 If you discover a security vulnerability:
 
 1. **DO NOT** create a public GitHub issue
-2. Contact the security team directly: [your-security-team@causeway.com]
+2. Contact the security team directly via your organization's security reporting process
 3. Provide details:
    - Description of the vulnerability
    - Steps to reproduce
@@ -133,9 +133,9 @@ Security audits are performed regularly. The latest audit report can be found in
 
 ## Questions?
 
-For security-related questions, contact:
-- Security Team: [your-security-team@causeway.com]
-- Infrastructure Team: [your-infra-team@causeway.com]
+For security-related questions, contact your organization's:
+- Security Team
+- Infrastructure Team
 
 ---
 
