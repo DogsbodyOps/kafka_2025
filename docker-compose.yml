@@ -53,7 +53,8 @@ services:
       "
 
   kafdrop:
-    image: docker.causeway.com/kafka/kafdrop:3.8.0
+    #image: docker.causeway.com/kafka/kafdrop:3.8.0
+    image: obsidiandynamics/kafdrop:4.2.0
     container_name: kafdrop
     restart: always
     ports:
