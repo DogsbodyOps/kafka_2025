@@ -65,7 +65,8 @@ services:
       SERVER_SERVLET_CONTEXTPATH: "/"
 
   rest:
-    image: docker.causeway.com/kafka/kafka-rest:7.3.0
+    #image: docker.causeway.com/kafka/kafka-rest:7.3.0
+    image: confluentinc/cp-kafka-rest:latest-ubi9
     container_name: rest
     network_mode: host
     restart: always
