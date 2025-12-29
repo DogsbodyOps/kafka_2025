@@ -1,56 +1,48 @@
 services:
   kafka:
-    image: confluentinc/cp-kafka:7.3.0
+    image: confluentinc/cp-kafka:3.3.0
     container_name: kafka
     network_mode: host
     restart: always
     environment:
-      # KRaft mode configuration (shared mode: broker+controller)
-      KAFKA_NODE_ID: "${KAFKA_BROKER_ID}"
-      KAFKA_PROCESS_ROLES: "broker,controller"
-      KAFKA_CONTROLLER_QUORUM_VOTERS: "${KAFKA_CONTROLLER_QUORUM_VOTERS}"
-      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
-      
-      # Listener configuration
+      KAFKA_BROKER_ID: "${KAFKA_BROKER_ID}"
+      KAFKA_ZOOKEEPER_CONNECT: "${KAFKA_ZOOKEEPER_CONNECT}"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP}"
       KAFKA_LISTENERS: "${KAFKA_LISTENERS}"
       KAFKA_ADVERTISED_LISTENERS: "${KAFKA_ADVERTISED_LISTENERS}"
       KAFKA_INTER_BROKER_LISTENER_NAME: "${KAFKA_INTER_BROKER_LISTENER_NAME}"
-      
-      # SSL configuration
       KAFKA_SSL_KEYSTORE_FILENAME: "${KAFKA_SSL_KEYSTORE_FILENAME}"
       KAFKA_SSL_KEYSTORE_CREDENTIALS: "${KAFKA_SSL_KEYSTORE_CREDENTIALS}"
       KAFKA_SSL_KEY_CREDENTIALS: "${KAFKA_SSL_KEY_CREDENTIALS}"
       KAFKA_SSL_TRUSTSTORE_FILENAME: "${KAFKA_SSL_TRUSTSTORE_FILENAME}"
       KAFKA_SSL_TRUSTSTORE_CREDENTIALS: "${KAFKA_SSL_TRUSTSTORE_CREDENTIALS}"
       KAFKA_SSL_CLIENT_AUTH: "${KAFKA_SSL_CLIENT_AUTH}"
-      
-      # Logging and topic configuration
       KAFKA_LOG4J_LOGGERS: "${KAFKA_LOG4J_LOGGERS}"
       KAFKA_DELETE_TOPIC_ENABLE: "${KAFKA_DELETE_TOPIC_ENABLE}"
       KAFKA_DEFAULT_REPLICATION_FACTOR: "${KAFKA_DEFAULT_REPLICATION_FACTOR}"
-      
-      # Authorization
       KAFKA_AUTHORIZER_CLASS: "${KAFKA_AUTHORIZER_CLASS}"
       KAFKA_SUPER_USERS: "${KAFKA_SUPER_USERS}"
-      
-      # KRaft cluster metadata
-      CLUSTER_ID: "${KAFKA_CLUSTER_ID:-MkU3OEVBNTcwNTJENDM2Qk}"
-      
-      # Log directories
-      KAFKA_LOG_DIRS: "/var/lib/kafka/data"
     volumes:
       - /data/kafka/vol3/kafka-data:/var/lib/kafka/data
       - /data/kafka/vol4/secrets:/etc/kafka/secrets
-    command: >
-      bash -c "
-      # Format storage if not already formatted
-      if [ ! -f /var/lib/kafka/data/meta.properties ]; then
-        kafka-storage format -t $${CLUSTER_ID} -c /etc/kafka/kafka.properties
-      fi
-      # Start Kafka
-      /etc/confluent/docker/run
-      "
+      # plus your log4j jars as needed
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:3.3.0
+    container_name: zk
+    network_mode: host
+    restart: always
+    environment:
+      ZOOKEEPER_SERVER_ID: "${KAFKA_BROKER_ID}"
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_LIMIT: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_SET_ACL: "true"
+      ZOOKEEPER_SERVERS: "${ZOOKEEPER_SERVERS}"
+    volumes:
+      - /data/kafka/vol1/zk-data:/var/lib/zookeeper/data
+      - /data/kafka/vol2/zk-txn-logs:/var/lib/zookeeper/log
 
   kafdrop:
     image: docker.causeway.com/kafka/kafdrop:3.8.0
@@ -59,18 +51,20 @@ services:
     ports:
       - "9000:9000"
     environment:
+      ZOOKEEPER_CONNECT: "${KAFKA_ZOOKEEPER_CONNECT}"
       KAFKA_BROKERCONNECT: "${KAFKA_BROKER_CONNECT}"
       JVM_OPTS: "-Xms32M -Xmx64M"
       SERVER_SERVLET_CONTEXTPATH: "/"
 
   rest:
-    image: docker.causeway.com/kafka/kafka-rest:7.3.0
+    image: docker.causeway.com/kafka/kafka-rest:3.3.0
     container_name: rest
     network_mode: host
     restart: always
     environment:
       KAFKA_REST_HOST_NAME: "${KAFKA_REST_HOST_NAME}"
       KAFKA_REST_BOOTSTRAP_SERVERS: "${KAFKA_REST_BOOTSTRAP_SERVERS}"
+      KAFKA_REST_ZOOKEEPER_CONNECT: "${KAFKA_REST_ZOOKEEPER_CONNECT}"
       KAFKA_REST_LISTENERS: "${KAFKA_REST_LISTENERS}"
       KAFKA_REST_SCHEMA_REGISTRY_URL: "${KAFKA_REST_SCHEMA_REGISTRY_URL}"
       KAFKA_HEAP_OPTS: "${KAFKA_HEAP_OPTS}"
